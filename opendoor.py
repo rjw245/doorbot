@@ -9,11 +9,12 @@
 
 import RPi.GPIO as GPIO
 import time
+import json
 
-motordig = 16
-motorpwm = 18
-openLED  = 12
-closeLED = 10
+motordig = 16	#Motor digital pin (directional)
+motorpwm = 18	#Motor PWM pin (power/speed)
+openLED  = 12	#LED for when door is opening
+closeLED = 10	#LED for when door is closing
 
 #Setup GPIO and pins
 GPIO.setmode(GPIO.BOARD)
@@ -29,26 +30,61 @@ GPIO.output(motordig,GPIO.LOW)
 GPIO.output(openLED,GPIO.LOW)
 GPIO.output(closeLED,GPIO.LOW)
 
+
+########## FUNCTION DECLARATIONS ##########
+
+# loadTimings():
+# Loads motor timing settings from
+# /home/pi/opendoor_timing.txt
+#
+# Returns a list containing the number
+# of seconds the motor should run to open
+# the door, pause, and then close the door
+# in that order.
+def loadTimings():
+        path = '/home/pi/opendoor_timing.txt'
+        jsonfile = open(path,'r')
+        timing = json.load(jsonfile)
+        return [float(timing['open']), float(timing['pause']), float(timing['close'])]
+
+
+# openDoor():
+# This function interacts with
+# the Raspberry Pi's GPIO to
+# send the proper signal to the motor
+# controller with the right timing
 def openDoor():
+	#Get timings from settings file
+	oTime, pTime, cTime = loadTimings()
+	
 	#Open door
 	GPIO.output(closeLED,GPIO.LOW)
 	GPIO.output(openLED,GPIO.HIGH)
+	
 	GPIO.output(motordig,GPIO.LOW)
 	p.ChangeDutyCycle(50)
-	time.sleep(4.5)
+	
+	time.sleep(oTime)
+	
 	p.ChangeDutyCycle(0)
 	
-	#Hold open
+	
+	#Pause while open
 	GPIO.output(closeLED,GPIO.LOW)
 	GPIO.output(openLED,GPIO.LOW)
-	time.sleep(10)
+	
+	time.sleep(pTime)
+	
 	
 	#Close
 	GPIO.output(closeLED,GPIO.HIGH)
 	GPIO.output(openLED,GPIO.LOW)
+	
 	p.ChangeDutyCycle(50)
 	GPIO.output(motordig,GPIO.HIGH)
-	time.sleep(8.5)
+	
+	time.sleep(cTime)
+	
 	
 	#Rest
 	GPIO.output(closeLED,GPIO.LOW)
@@ -56,25 +92,29 @@ def openDoor():
 	p.ChangeDutyCycle(0)
 	GPIO.output(motordig,GPIO.LOW)
 
-def writeLog():
-	logFile = open('/home/pi/opendoor.log','a')
-	timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-	logFile.write(timestamp + " Opened door\n")
-	logFile.close()
 
-#Main loop
+
+########## MAIN LOOP ##########
+
 try:
+	#Check flag file repeatedly
 	while 1:
 		doorfile = open('/var/www/door.txt','r+')
 		doorcmd  = doorfile.read(2)
-		#print doorcmd
+		
+		#If flagged,
+		#unflag and open door	
 		if(doorcmd == '1'):
 			doorfile.seek(0)
 			doorfile.write('0')
 			openDoor()
-			writeLog()
+
+		doorfile.close()
+
 except KeyboardInterrupt:
 	pass
+
+#Upon exiting script:
 p.stop()
 GPIO.cleanup()
 doorfile.close()
