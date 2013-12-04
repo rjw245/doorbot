@@ -58,10 +58,10 @@ def openDoor():
 	oTime, pTime, cTime = loadTimings()
 	
 	#Open door
-	GPIO.output(closeLED,GPIO.LOW)
+	GPIO.output(closeLED,GPIO.LOW)	#LEDs
 	GPIO.output(openLED,GPIO.HIGH)
 	
-	GPIO.output(motordig,GPIO.LOW)
+	GPIO.output(motordig,GPIO.LOW)	#Motor
 	p.ChangeDutyCycle(50)
 	
 	time.sleep(oTime)
@@ -70,28 +70,28 @@ def openDoor():
 	
 	
 	#Pause while open
-	GPIO.output(closeLED,GPIO.LOW)
+	GPIO.output(closeLED,GPIO.LOW)	#LEDs
 	GPIO.output(openLED,GPIO.LOW)
 	
 	time.sleep(pTime)
 	
 	
 	#Close
-	GPIO.output(closeLED,GPIO.HIGH)
+	GPIO.output(closeLED,GPIO.HIGH)	#LEDs
 	GPIO.output(openLED,GPIO.LOW)
 	
+	GPIO.output(motordig,GPIO.HIGH)	#Motor
 	p.ChangeDutyCycle(50)
-	GPIO.output(motordig,GPIO.HIGH)
-	
+
 	time.sleep(cTime)
 	
 	
 	#Rest
-	GPIO.output(closeLED,GPIO.LOW)
+	GPIO.output(closeLED,GPIO.LOW)	#LEDs
 	GPIO.output(openLED,GPIO.LOW)
-	p.ChangeDutyCycle(0)
-	GPIO.output(motordig,GPIO.LOW)
 
+	GPIO.output(motordig,GPIO.LOW)	#Motor
+	p.ChangeDutyCycle(0)
 
 
 ########## MAIN LOOP ##########
