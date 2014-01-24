@@ -27,8 +27,12 @@ that request. A request is denoted by a specific file, door.txt, containing a 1,
 is no pending request, it will read 0. The Python script repeatedly checks this file.
 The use of a file as a flag allows for a very simply interface for triggering Doorbot. Any
 application can modify that file (IOW write a 1 to the file) and Doorbot will see the change
-and open the door in response. In this way, a lot of things can be used as input. For now,
-we have a web server running on the Pi that hosts a PHP script that will modify the door.txt file
-when the proper code is given via GET. We have plans to incorporate an RFID reader into our design
-so that we can swipe our ID cards in order to get into our room.
+and open the door in response. In this way, a lot of things can be used as input.
+
+Currently, there are two methods of opening the door. The first to be implemented 
+was a web server running on the Pi that hosts a PHP script that will modify the door.txt file
+when the proper password is given via GET. The second is an RFID reader (specifically the
+Parallax RFID Card Reader). A second Python script is continuously run on the Pi which waits
+for a message from the RFID reader via serial. If the message contains a key listed in the keys.txt
+file, the Doorbot flag will be triggered (i.e. door.txt will be written to).
 

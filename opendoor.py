@@ -13,8 +13,12 @@ import json
 
 motordig = 16	#Motor digital pin (directional)
 motorpwm = 18	#Motor PWM pin (power/speed)
-openLED  = 12	#LED for when door is opening
-closeLED = 10	#LED for when door is closing
+openLED  = 24	#LED for when door is opening
+closeLED = 22	#LED for when door is closing
+
+rxPin	 = 8	#Serial read pin
+txPin	 = 10	#Serial write pin (not used by RFID reader)
+rfid_en	 = 12	#Pin to enable RFID reader (LOW = ON)
 
 #Setup GPIO and pins
 GPIO.setmode(GPIO.BOARD)
@@ -99,7 +103,7 @@ def openDoor():
 try:
 	#Check flag file repeatedly
 	while 1:
-		doorfile = open('/var/www/door.txt','r+')
+		doorfile = open('/home/pi/door.txt','r+')
 		doorcmd  = doorfile.read(2)
 		
 		#If flagged,
