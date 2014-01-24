@@ -1,6 +1,7 @@
 doorbot
 =======
 Raspberry Pi-powered dorm room door unlocker
+Video: http://youtu.be/aq7At8ip24I
 
 Doorbot is a project thought up and executed by two roommates at Tufts University: Riley Wood and Win Halelamien.
 The basic idea is that unlocking your door with a key is time consuming and frustrating when you forget your key.
@@ -35,4 +36,3 @@ when the proper password is given via GET. The second is an RFID reader (specifi
 Parallax RFID Card Reader). A second Python script is continuously run on the Pi which waits
 for a message from the RFID reader via serial. If the message contains a key listed in the keys.txt
 file, the Doorbot flag will be triggered (i.e. door.txt will be written to).
-
