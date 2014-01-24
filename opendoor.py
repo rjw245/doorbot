@@ -2,7 +2,7 @@
 
 #This script is run at boot using /etc/rc.local
 #It polls a file to see if there is someone waiting
-#to get into the room. The file is: /var/www/door.txt
+#to get into the room. The file is: /home/pi/door.txt
 #A 1 denotes an unanswered door command, at which point
 #the Pi will open the door and reset the file to 0.
 
